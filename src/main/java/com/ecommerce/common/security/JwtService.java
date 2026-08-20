@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class JwtService {
 
     @Value("${jwt.secret}")
-    private String secretKey;
+    private String secretKey; // IntelliJ thì config ở RunConfig/environment variables
 
     @Value("${jwt.expiration}")
     private long expirationMs;
@@ -56,7 +56,7 @@ public class JwtService {
         Claims claims = Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
-                .parseSignedClaims(token)
+                .parseSignedClaims(token)// verify chữ ký. Nếu sai/hết hạn → ném exception tại đây
                 .getPayload();
         return resolver.apply(claims);
     }

@@ -12,6 +12,10 @@ import tools.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.Map;
 
+/**
+ * xử lý khi request chưa authenticate mà cố truy cập endpoint cần login
+ * trả về lỗi 401 thay vì để Spring Security redirect sang trang login mặc định
+ */
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 

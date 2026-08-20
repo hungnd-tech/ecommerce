@@ -6,14 +6,18 @@ import com.ecommerce.user.dto.LoginRequest;
 import com.ecommerce.user.dto.RegisterRequest;
 import com.ecommerce.user.entity.User;
 import com.ecommerce.user.repository.UserRepository;
+import com.ecommerce.user.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -42,16 +46,22 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        Authentication authentication;
         try {
-            authenticationManager.authenticate(
+            authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
-        } catch (BadCredentialsException ex) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sai email hoặc mật khẩu");
+        } catch (AuthenticationException ex) {
+            // Bắt AuthenticationException (lớp cha) thay vì chỉ BadCredentialsException:
+            // DaoAuthenticationProvider check trạng thái tài khoản (LockedException/DisabledException,
+            // ném ra khi user đã bị soft-delete) TRƯỚC khi so password -> 2 exception này không phải
+            // con của BadCredentialsException, nếu chỉ bắt BadCredentialsException sẽ lọt ra ngoài
+            // thành lỗi 500 thay vì 401 sạch như mong đợi.
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sai email hoặc mật khẩu, hoặc tài khoản đã bị khoá");
         }
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sai email hoặc mật khẩu"));
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = Objects.requireNonNull(userDetails, "Authentication principal must not be null").getUser();
 
         return buildAuthResponse(user);
     }

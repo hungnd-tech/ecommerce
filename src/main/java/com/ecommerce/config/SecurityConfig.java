@@ -18,47 +18,56 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@Configuration
-@EnableWebSecurity
-@EnableMethodSecurity
+@Configuration // khai @Bean thủ công, đảm bảo singleton
+@EnableWebSecurity // tự định nghĩa SecurityFilterChain ( dùng cho REST API)
+@EnableMethodSecurity // bật khả năng dùng @PreAuthorize("hasRole('ADMIN')") ngay trên method của controller/service
 @RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint; // thêm field
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+    @Bean // quản lí việc xác thực
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    @Bean
+    @Bean // thực hiện việc xác thực bằng username/password so với dữ liệu trong DB
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userDetailsService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }
 
-    @Bean
+    @Bean // cấu hình toàn bộ luật bảo mật
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // Tắt bảo mật CSRF, CSRF chỉ nguu hiểm khi xác thực dựa trên session/cookie.
                 .csrf(csrf -> csrf.disable())
+                // không tạo, không dùng HttpSession để lưu trạng thái đăng nhập
                 .sessionManagement(session
                         -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // Đăng ký nơi xử lý khi có request bị từ chối vì chưa xác thực
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .authorizeHttpRequests(auth -> auth
+                        // /error: endpoint khi có exception xảy ra ở tầng dưới;
+                        // nếu rơi vào authenticated(), request bị lỗi bị chặn thêm 1 lớp nữa thành 401 sai bản chất
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/health", "/error").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().authenticated() // cần authen
                 )
+                // báo Spring Security dùng provider này khi cần xác thực username/password thật (áp dụng cho luồng login ban đầu, trước khi có JWT).
                 .authenticationProvider(authenticationProvider())
+                // với mọi request có token, jwtAuthenticationFilter chạy trước, tự set SecurityContextHolder nếu
+                // token hợp lệ
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
+        // Chốt toàn bộ cấu hình, tạo ra SecurityFilterChain
         return http.build();
     }
 }

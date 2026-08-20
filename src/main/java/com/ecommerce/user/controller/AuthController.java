@@ -19,6 +19,7 @@ public class AuthController {
 
     private final AuthService authService;
 
+    // @Valid - trigger Bean Validation chạy check @NotBlank/@Email/@Size request trước khi vào method
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
         return ResponseEntity.ok(authService.register(request));
