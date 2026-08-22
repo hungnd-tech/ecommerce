@@ -1,0 +1,13 @@
+$kind: http-request
+name: create products
+description: ""
+url: "{{base_url}}/api/products"
+method: POST
+body:
+  type: json
+  content: '{ "type": "PHYSICAL", "name": "Áo thun", "price": 199000, "stockQuantity": 50, "weightKg": 0.3 }'
+auth:
+  type: bearer
+  credentials:
+    token: "{{supabase_service_role_api_key_0rrn}}"
+order: 4449491950961364

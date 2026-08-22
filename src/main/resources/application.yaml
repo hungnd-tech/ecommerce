@@ -15,6 +15,10 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+    # open-in-view: false đánh đổi "tiện lợi ban đầu" lấy "kiểm soát chặt + phát hiện lỗi sớm"
+    # mặc định là true: session được mở ra ngay khi request HTTP bắt đầu, giữ connect DB suốt quá trình
+    # false: session chỉ sống đúng trong phạm vi 1 @Transactional đang active, lazy loading ném lõi ngay
+    # lazy loading là chỉ khi cần mới gọi đến
     open-in-view: false
     properties:
       hibernate:

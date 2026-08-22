@@ -52,11 +52,6 @@ public class AuthService {
                     new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
             );
         } catch (AuthenticationException ex) {
-            // Bắt AuthenticationException (lớp cha) thay vì chỉ BadCredentialsException:
-            // DaoAuthenticationProvider check trạng thái tài khoản (LockedException/DisabledException,
-            // ném ra khi user đã bị soft-delete) TRƯỚC khi so password -> 2 exception này không phải
-            // con của BadCredentialsException, nếu chỉ bắt BadCredentialsException sẽ lọt ra ngoài
-            // thành lỗi 500 thay vì 401 sạch như mong đợi.
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Sai email hoặc mật khẩu, hoặc tài khoản đã bị khoá");
         }
 

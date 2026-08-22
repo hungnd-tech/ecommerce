@@ -1,0 +1,15 @@
+$kind: collection
+name: Ecommerce API
+variables:
+  - key: supabase_service_role_api_key_0n99
+    secret: true
+    disabled: false
+  - key: supabase_service_role_api_key_0rrn
+    secret: true
+    disabled: false
+  - key: json_web_token_1dse
+    secret: true
+    disabled: false
+  - key: json_web_token_0mn8
+    secret: true
+    disabled: false

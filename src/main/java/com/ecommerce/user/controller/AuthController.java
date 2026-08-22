@@ -8,6 +8,7 @@ import com.ecommerce.user.security.CustomUserDetails;
 import com.ecommerce.user.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +20,12 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // @Valid - trigger Bean Validation chạy check @NotBlank/@Email/@Size request trước khi vào method
+    // @Valid - trigger Bean Validation chạy check @NotBlank/@Email/@Size trước khi vào method
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-        return ResponseEntity.ok(authService.register(request));
+        // TODO
+        // thành công trả 201, chưa có header: Location (ví chưa có GET /api/users/{id})
+        return ResponseEntity.status(HttpStatus.CREATED).body(authService.register(request));
     }
 
     @PostMapping("/login")

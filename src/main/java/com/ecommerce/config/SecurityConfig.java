@@ -5,6 +5,7 @@ import com.ecommerce.common.security.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -59,6 +60,7 @@ public class SecurityConfig {
                         // /error: endpoint khi có exception xảy ra ở tầng dưới;
                         // nếu rơi vào authenticated(), request bị lỗi bị chặn thêm 1 lớp nữa thành 401 sai bản chất
                         .requestMatchers("/api/auth/register", "/api/auth/login", "/api/health", "/error").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/products/**", "/api/categories/**").permitAll()
                         .anyRequest().authenticated() // cần authen
                 )
                 // báo Spring Security dùng provider này khi cần xác thực username/password thật (áp dụng cho luồng login ban đầu, trước khi có JWT).

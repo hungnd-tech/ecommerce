@@ -43,13 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // kiểm tra request này chưa được authenticate bởi bước nào khác trước đó
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                // dựng Authentication
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-                // Token còn hợp lệ (chữ ký đúng, chưa hết hạn) KHÔNG có nghĩa user vẫn còn dùng được:
-                // token là stateless, được phát hành có thể trước khi user bị soft-delete/khoá.
-                // Đã có sẵn userDetails trong tay (không tốn thêm query) nên check luôn ở đây,
-                // để 1 token đã phát hành mất hiệu lực ngay khi tài khoản bị khoá, thay vì phải
-                // chờ tự hết hạn (tối đa 24h).
+                // nếu tài khoản bị khoá: không set Authentication -> request đi tiếp như chưa đăng nhập,
+                // endpoint cần login sẽ tự bị chặn 401 ở SecurityConfig
                 if (userDetails.isEnabled() && userDetails.isAccountNonLocked()) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
@@ -58,8 +55,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken); // request đã login
                 }
-                // Nếu tài khoản bị khoá: không set Authentication -> request đi tiếp như chưa đăng nhập,
-                // endpoint cần login sẽ tự bị chặn 401 ở bước authorize (SecurityConfig), đúng bản chất.
             }
 
         } catch (JwtException | UsernameNotFoundException ex) {
