@@ -1,0 +1,12 @@
+$kind: http-request
+name: addToCart
+url: "{{baseUrl}}/api/cart/items"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "productId": 1,
+      "quantity": 2
+    }
+order: 1787470754769

@@ -1,0 +1,11 @@
+$kind: http-request
+name: updateQuantity
+url: "{{baseUrl}}/api/cart/items/1"
+method: PUT
+body:
+  type: json
+  content: |-
+    {
+      "quantity": 5
+    }
+order: 2153715353509024

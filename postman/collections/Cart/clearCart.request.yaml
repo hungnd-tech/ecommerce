@@ -1,0 +1,9 @@
+$kind: http-request
+name: clearCart
+description: ""
+url: "{{baseUrl}}/api/cart"
+method: DELETE
+body:
+  type: json
+  content: ""
+order: 4177166212978331

@@ -6,4 +6,13 @@ method: POST
 body:
   type: json
   content: '{ "email": "customer@test.com", "password": "12345678" }'
+scripts:
+  - type: beforeRequest
+    code: ""
+    language: text/javascript
+  - type: afterResponse
+    code: |-
+      const response = pm.response.json();
+      pm.environment.set("token", response.token);
+    language: text/javascript
 order: 4235485969542532

@@ -1,0 +1,6 @@
+name: ecommerce-local
+values:
+  - key: baseUrl
+    value: ''
+  - key: token
+    secret: true

@@ -1,0 +1,8 @@
+$kind: collection
+name: Cart
+auth:
+  - id: 9cde2c92-7be0-4e0c-83cf-3d05c2ea7a8a
+    type: bearer
+    name: Bearer Token
+    credentials:
+      token: "{{token}}"

@@ -1,0 +1,8 @@
+$kind: http-request
+name: removeItem
+url: "{{baseUrl}}/api/cart/items/1"
+method: DELETE
+body:
+  type: json
+  content: ""
+order: 3597027649422976
