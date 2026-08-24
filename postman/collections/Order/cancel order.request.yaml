@@ -1,6 +1,6 @@
 $kind: http-request
 name: cancel order
-url: "{{baseUrl}}/api/orders/3/cancel"
+url: "{{baseUrl}}/api/orders/1/cancel"
 method: PUT
 auth:
   type: bearer

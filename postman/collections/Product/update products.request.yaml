@@ -4,9 +4,10 @@ url: "{{baseUrl}}/api/products/{{testProductId}}"
 method: PUT
 body:
   type: json
-  content: '{ "type": "PHYSICAL", "name": "Ban hoc", "price": 179000, "stockQuantity": 1 }'
+  content: '{ "type": "PHYSICAL", "name": "Ban hoc", "price": 179000,
+    "stockQuantity": 1 }'
 auth:
   type: bearer
   credentials:
     token: "{{tokenAdmin}}"
-order: 4457109808509174
+order: 3532802851902795

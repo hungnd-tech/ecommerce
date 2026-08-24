@@ -1,5 +1,5 @@
 $kind: collection
-name: Ecommerce API
+name: Authen
 variables:
   - key: supabase_service_role_api_key_0n99
     secret: true
