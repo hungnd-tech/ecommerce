@@ -47,6 +47,10 @@ public abstract class Product {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    @Version
+    @Column(nullable = false)
+    private Long version;
+
     // quan hệ N-N với Category qua bảng trung gian product_category
     @ManyToMany
     @JoinTable(

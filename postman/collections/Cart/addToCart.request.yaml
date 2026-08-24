@@ -4,9 +4,9 @@ url: "{{baseUrl}}/api/cart/items"
 method: POST
 body:
   type: json
-  content: |-
-    {
-      "productId": 1,
-      "quantity": 2
-    }
+  content: '{ "productId": {{testProductId}}, "quantity": 1 }'
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenA}}"
 order: 1787470754769

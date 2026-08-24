@@ -1,7 +1,18 @@
 $kind: http-request
-url: " {{base_url}}/api/auth/register"
+name: register
+url: " {{baseUrl}}/api/auth/register"
 method: POST
+headers:
+  - key: ""
+    value: ""
+    disabled: true
 body:
   type: json
-  content: '{ "email": "customer@test.com", "password": "12345678", "fullName": "Nguyen Van A" }'
+  content: '{ "email": "AdminA@test.com", "password": "12345678", "fullName": "Admin A" }'
+auth:
+  type: noauth
+scripts:
+  - type: afterResponse
+    code: ""
+    language: text/javascript
 order: 1787386496454

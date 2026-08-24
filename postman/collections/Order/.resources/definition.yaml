@@ -1,6 +1,6 @@
 $kind: collection
-name: Cart
+name: Order
 auth:
-  - id: 9cde2c92-7be0-4e0c-83cf-3d05c2ea7a8a
+  - id: 8dd6a2f1-f666-4642-a3e2-4589999b2944
     type: noauth
     name: No Auth

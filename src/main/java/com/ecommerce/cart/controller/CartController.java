@@ -8,12 +8,15 @@ import com.ecommerce.user.security.CustomUserDetails;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cart")
 @RequiredArgsConstructor
+// để mô tả rõ cần đăng nhập (thực ra SecurityConfig đã có nhưng tránh sửa nhầm ở SecurityConfig)
+@PreAuthorize("isAuthenticated()")
 public class CartController {
 
     private final CartService cartService;

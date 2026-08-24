@@ -1,0 +1,10 @@
+$kind: http-request
+name: get order
+description: ""
+url: "{{baseUrl}}/api/orders/2"
+method: GET
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenB}}"
+order: 4464147761135030

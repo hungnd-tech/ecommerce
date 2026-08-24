@@ -5,4 +5,8 @@ method: GET
 body:
   type: json
   content: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenA}}"
 order: 2074999908513594

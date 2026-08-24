@@ -1,11 +1,12 @@
 $kind: http-request
-url: "{{base_url}}/api/products/1"
+name: update products
+url: "{{baseUrl}}/api/products/{{testProductId}}"
 method: PUT
 body:
   type: json
-  content: '{ "type": "DIGITAL", "name": "Áo thun (đã sửa)", "price": 179000, "downloadUrl": "https://x.com/y" }'
+  content: '{ "type": "PHYSICAL", "name": "Ban hoc", "price": 179000, "stockQuantity": 1 }'
 auth:
   type: bearer
   credentials:
-    token: ""
+    token: "{{tokenAdmin}}"
 order: 4457109808509174

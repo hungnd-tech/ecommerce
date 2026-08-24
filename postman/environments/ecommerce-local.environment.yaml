@@ -2,5 +2,11 @@ name: ecommerce-local
 values:
   - key: baseUrl
     value: ''
-  - key: token
-    secret: true
+  - key: testProductId
+    value: ''
+  - key: tokenA
+    value: ''
+  - key: tokenB
+    value: ''
+  - key: tokenAdmin
+    value: ''

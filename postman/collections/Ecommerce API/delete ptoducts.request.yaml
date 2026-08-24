@@ -1,7 +1,7 @@
 $kind: http-request
 name: delete ptoducts
 description: ""
-url: "{{base_url}}/api/products/1"
+url: "{{baseUrl}}/api/products/1"
 method: DELETE
 auth:
   type: bearer

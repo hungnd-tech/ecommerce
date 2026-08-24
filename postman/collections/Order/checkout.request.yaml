@@ -1,0 +1,17 @@
+$kind: http-request
+name: checkout
+url: "{{baseUrl}}/api/orders/checkout"
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "receiverName": "Nguyen Van A",
+      "receiverPhone": "0900000001",
+      "shippingAddress": "123 Le Loi, Q1, HCMC"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{tokenA}}"
+order: 3841165662136558

@@ -11,6 +11,7 @@ import com.ecommerce.product.repository.CategoryRepository;
 import com.ecommerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,6 +82,14 @@ public class ProductService {
             case DigitalProduct digital -> digital.setDownloadUrl(request.getDownloadUrl());
             default -> throw new IllegalStateException("Loại sản phẩm không xác định: " + existing.getClass());
         }
+
+        try {
+            productRepository.saveAndFlush(existing);
+        } catch (ObjectOptimisticLockingFailureException ex) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT,
+                    "Sản phẩm vừa bị người khác cập nhật, vui lòng tải lại dữ liệu mới nhất và thử lại");
+        }
+
 
         return toResponse(existing);
     }

@@ -73,7 +73,7 @@ public class CartService {
 
     @Transactional(readOnly = true)
     public CartResponse getCart(Long userId) {
-        List<CartItem> items = cartItemRepository.findByUserId(userId);
+        List<CartItem> items = cartItemRepository.findByUserIdWithProduct(userId);
 
         List<CartItemResponse> responses = items.stream()
                 .map(item -> {
