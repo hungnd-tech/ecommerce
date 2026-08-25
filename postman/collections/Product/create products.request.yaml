@@ -5,12 +5,11 @@ url: "{{baseUrl}}/api/products"
 method: POST
 body:
   type: json
-  content: '{ "type": "PHYSICAL", "name": "Quan Bo", "price": 299000,
-    "stockQuantity": 1, "weightKg": 0.3 }'
+  content: '{ "type": "PHYSICAL", "name": "Quan Bo Nam", "price": 299000, "stockQuantity": 1, "weightKg": 0.3 }'
 auth:
   type: bearer
   credentials:
-    token: ""
+    token: "{{tokenA}}"
 scripts:
   - type: afterResponse
     code: pm.environment.set("testProductId", pm.response.json().id);

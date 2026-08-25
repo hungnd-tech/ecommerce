@@ -33,7 +33,7 @@ public class OrderService {
 
     @Transactional
     public OrderResponse checkout(Long userId, CheckoutRequest request) {
-        List<CartItem> cartItems = cartItemRepository.findByUserId(userId);
+        List<CartItem> cartItems = cartItemRepository.findByUserIdForUpdate(userId);
         if (cartItems.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Giỏ hàng trống");
         }
