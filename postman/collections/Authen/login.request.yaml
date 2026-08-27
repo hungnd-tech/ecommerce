@@ -5,12 +5,12 @@ url: "{{baseUrl}}/api/auth/login"
 method: POST
 body:
   type: json
-  content: '{ "email": "customerA@test.com", "password": "12345678" }'
+  content: '{ "email": "admin@test.com", "password": "12345678" }'
 scripts:
   - type: beforeRequest
     code: ""
     language: text/javascript
   - type: afterResponse
-    code: pm.environment.set("tokenA", pm.response.json().token);
+    code: pm.environment.set("tokenAdmin", pm.response.json().token);
     language: text/javascript
 order: 4235485969542532

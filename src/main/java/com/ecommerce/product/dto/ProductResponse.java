@@ -1,12 +1,14 @@
 package com.ecommerce.product.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ProductResponse {
     private Long id;

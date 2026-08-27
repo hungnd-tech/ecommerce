@@ -10,6 +10,9 @@ import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.repository.CategoryRepository;
 import com.ecommerce.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.http.HttpStatus;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,6 +33,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
 
+    @Cacheable(value = "productsList", key = "'all'")
     // Public: Guest/Customer xem danh sách - chỉ sản phẩm chưa bị soft-delete
     @Transactional(readOnly = true)
     public List<ProductResponse> getAll() {
@@ -38,6 +42,7 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "products", key = "#id")
     // @ManyToMany mặc định là LAZY, product.getCategories() chỉ gọi DB khi đến đoạn toResponse nên cần Transactional
     // readOnly: chỉ đọc data
     @Transactional(readOnly = true)
@@ -52,6 +57,7 @@ public class ProductService {
     @PreAuthorize("hasRole('ADMIN')")
     // method chạm DB nhiều hơn 1 lần (dù chỉ đọc + ghi, hay ghi nhiều bảng) nên nằm trong đúng 1 transaction
     @Transactional
+    @CacheEvict(value = "productsList", key = "'all'")
     public ProductResponse create(ProductRequest request) {
         Product product = buildEntity(request);
         product.setCategories(resolveCategories(request.getCategoryIds()));
@@ -61,6 +67,10 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "products", key = "#id"),
+            @CacheEvict(value = "productsList", key = "'all'")
+    })
     public ProductResponse update(Long id, ProductRequest request) {
         Product existing = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
@@ -96,6 +106,10 @@ public class ProductService {
 
     @PreAuthorize("hasRole('ADMIN')")
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "products", key = "#id"),
+            @CacheEvict(value = "productsList", key = "'all'")
+    })
     public void softDelete(Long id) {
         Product product = productRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy sản phẩm"));
