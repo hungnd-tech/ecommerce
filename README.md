@@ -58,6 +58,10 @@ App chạy ở `http://localhost:8080`, health check `GET /api/health`, Kafka UI
 
 ## Test
 
+```bash
+mvnw test
+```
+
 Unit test (Service, mock Repository) + `@DataJpaTest` chạy trên MySQL thật cho các query cần pessimistic lock. Kịch bản
 test concurrency (race, deadlock, double-submit) chạy bằng `curl` song song
 
