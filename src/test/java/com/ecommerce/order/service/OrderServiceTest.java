@@ -9,6 +9,7 @@ import com.ecommerce.order.entity.OrderItem;
 import com.ecommerce.order.entity.OrderStatus;
 import com.ecommerce.order.event.OrderCreatedEvent;
 import com.ecommerce.order.repository.OrderRepository;
+import com.ecommerce.payment.repository.PaymentRepository;
 import com.ecommerce.product.entity.PhysicalProduct;
 import com.ecommerce.product.repository.ProductRepository;
 import com.ecommerce.user.entity.User;
@@ -45,6 +46,8 @@ class OrderServiceTest {
     private UserRepository userRepository;
     @Mock
     private ApplicationEventPublisher eventPublisher;
+    @Mock
+    private PaymentRepository paymentRepository;
 
     @InjectMocks
     private OrderService orderService;
@@ -82,6 +85,7 @@ class OrderServiceTest {
         when(userRepository.getReferenceById(9L)).thenReturn(User.builder().id(9L).build());
         when(productRepository.findByIdForUpdate(1L)).thenReturn(Optional.of(p1));
         when(productRepository.findByIdForUpdate(2L)).thenReturn(Optional.of(p2));
+        when(paymentRepository.findByOrderId(any())).thenReturn(Optional.empty());
 
         CheckoutRequest request = new CheckoutRequest();
         request.setReceiverName("Nguyen Van A");
