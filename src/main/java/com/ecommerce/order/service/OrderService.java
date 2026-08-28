@@ -8,17 +8,20 @@ import com.ecommerce.order.dto.OrderResponse;
 import com.ecommerce.order.entity.Order;
 import com.ecommerce.order.entity.OrderItem;
 import com.ecommerce.order.entity.OrderStatus;
+import com.ecommerce.order.event.OrderCreatedEvent;
 import com.ecommerce.order.repository.OrderRepository;
 import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.repository.ProductRepository;
 import com.ecommerce.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 
@@ -30,6 +33,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public OrderResponse checkout(Long userId, CheckoutRequest request) {
@@ -84,6 +88,13 @@ public class OrderService {
 
         cartItemRepository.deleteByUserId(userId);
 
+        eventPublisher.publishEvent(new OrderCreatedEvent(
+                order.getId(),
+                order.getUser().getId(),
+                order.getTotalAmount(),
+                Instant.now()
+        ));
+        
         return toResponse(order);
     }
 

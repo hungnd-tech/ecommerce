@@ -36,6 +36,14 @@ spring:
   cache:
     type: redis
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: notification-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000 # 24 giờ, tính bằng milliseconds
