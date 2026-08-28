@@ -4,7 +4,7 @@ url: "{{baseUrl}}/api/products/7"
 method: PUT
 body:
   type: json
-  content: '{"type":"DIGITAL","name": "quan bo dai","price":179000,"stockQuantity":20}'
+  content: '{"type":"PHYSICAL","name": "quan bo dai","price":179000,"stockQuantity":20}'
 auth:
   type: bearer
   credentials:

@@ -1,0 +1,8 @@
+target/
+.git/
+.idea/
+.env
+*.log
+.DS_Store
+postman/
+.postman/
