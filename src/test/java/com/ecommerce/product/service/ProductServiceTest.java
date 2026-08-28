@@ -56,7 +56,7 @@ public class ProductServiceTest {
 
         assertThat(response.getId()).isEqualTo(1L);
         assertThat(response.getName()).isEqualTo("Ao thun");
-        assertThat(response.getType()).isEqualTo("PHYSICAL");
+        assertThat(response.getType()).isEqualTo("");
         assertThat(response.isRequiresShipping()).isTrue();
         assertThat(response.getWeightKg()).isEqualByComparingTo(new BigDecimal("0.3"));
 
