@@ -10,10 +10,14 @@ import com.ecommerce.order.entity.OrderItem;
 import com.ecommerce.order.entity.OrderStatus;
 import com.ecommerce.order.event.OrderCreatedEvent;
 import com.ecommerce.order.repository.OrderRepository;
+import com.ecommerce.payment.entity.Payment;
+import com.ecommerce.payment.entity.PaymentStatus;
+import com.ecommerce.payment.repository.PaymentRepository;
 import com.ecommerce.product.entity.Product;
 import com.ecommerce.product.repository.ProductRepository;
 import com.ecommerce.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -33,6 +38,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final UserRepository userRepository;
+    private final PaymentRepository paymentRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
@@ -94,7 +100,7 @@ public class OrderService {
                 order.getTotalAmount(),
                 Instant.now()
         ));
-        
+
         return toResponse(order);
     }
 
@@ -125,6 +131,44 @@ public class OrderService {
         // không gọi save() - order và product đều đang managed trong transaction này, dirty-checking tự lo
     }
 
+    @Transactional
+    public void markAsPaid(Long orderId) {
+        Order order = orderRepository.findByIdForUpdate(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Đơn hàng không tồn tại"));
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            // đơn đã bị huỷ (hoặc xử lý bởi luồng khác) trước khi payment consumer kịp chạy -> bỏ qua, không ghi đè
+            log.warn("Bỏ qua markAsPaid cho order #{} vì status hiện tại là {} (không phải PENDING)", orderId, order.getStatus());
+            return;
+        }
+
+        order.setStatus(OrderStatus.PAID);
+    }
+
+    @Transactional
+    public void shipOrder(Long orderId) {
+        Order order = orderRepository.findByIdForUpdate(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Đơn hàng không tồn tại"));
+
+        if (order.getStatus() != OrderStatus.PAID) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Chỉ có thể giao hàng khi đơn đã ở trạng thái PAID");
+        }
+
+        order.setStatus(OrderStatus.SHIPPED);
+    }
+
+    @Transactional
+    public void completeOrder(Long orderId) {
+        Order order = orderRepository.findByIdForUpdate(orderId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Đơn hàng không tồn tại"));
+
+        if (order.getStatus() != OrderStatus.SHIPPED) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Chỉ có thể hoàn tất khi đơn đã ở trạng thái SHIPPED");
+        }
+
+        order.setStatus(OrderStatus.COMPLETED);
+    }
+
     @Transactional(readOnly = true)
     public List<OrderResponse> getMyOrders(Long userId) {
         return orderRepository.findByUserId(userId).stream().map(this::toResponse).toList();
@@ -151,6 +195,10 @@ public class OrderService {
                         .build())
                 .toList();
 
+        PaymentStatus paymentStatus = paymentRepository.findByOrderId(order.getId())
+                .map(Payment::getStatus)
+                .orElse(null); // chưa có payment (consumer async chưa xử lý xong, hoặc đơn đã bị huỷ trước đó)
+
         return OrderResponse.builder()
                 .id(order.getId())
                 .status(order.getStatus())
@@ -160,6 +208,7 @@ public class OrderService {
                 .shippingAddress(order.getShippingAddress())
                 .createdAt(order.getCreatedAt())
                 .items(items)
+                .paymentStatus(paymentStatus)
                 .build();
     }
 }

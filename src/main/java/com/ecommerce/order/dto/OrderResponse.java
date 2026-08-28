@@ -1,6 +1,7 @@
 package com.ecommerce.order.dto;
 
 import com.ecommerce.order.entity.OrderStatus;
+import com.ecommerce.payment.entity.PaymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,4 +22,5 @@ public class OrderResponse {
     private String shippingAddress;
     private LocalDateTime createdAt;
     private List<OrderItemResponse> items;
+    private PaymentStatus paymentStatus;
 }

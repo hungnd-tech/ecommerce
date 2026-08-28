@@ -44,6 +44,10 @@ spring:
       group-id: notification-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
+  servlet:
+    encoding:
+      force: true
+
 jwt:
   secret: ${JWT_SECRET}
   expiration: 86400000 # 24 giờ, tính bằng milliseconds

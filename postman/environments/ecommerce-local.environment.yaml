@@ -12,3 +12,5 @@ values:
     value: ''
   - key: tokenAd
     value: ''
+  - key: token
+    value: ''
